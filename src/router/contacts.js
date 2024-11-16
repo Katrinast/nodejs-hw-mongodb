@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 import { getContactsController, getContactByIdController, postContactsController, patchContactByIdController, deleteContactController } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { validateBody } from '../middlewares/validateBody.js';
+import validateBody from '../middlewares/validateBody.js';
 import { createContactsSchema, updateContactSchema } from '../validation/contacts.js';
 import { isValiId } from '../middlewares/isValidId.js';
 

@@ -29,7 +29,11 @@ export const getContacts = async ({page = 1, perPage = 10, sortBy = '_id', sortO
 
 };
 
-export const getContactById = id => ContactsCollection.findById(id);
+export const getContactById = async (contactId) => {
+  const contact = await ContactsCollection.findById(contactId);
+
+  return contact;
+};
 
 export const postContacts = (payload) => ContactsCollection.create(payload);
 
