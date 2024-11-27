@@ -16,6 +16,10 @@ export const getContacts = async ({page = 1, perPage = 10, sortBy = '_id', sortO
     contactQuery.where("contactType").equals(filter.contactType);
   };
 
+if (filter.userId) {
+    contactQuery.where('userId').eq(filter.userId);
+  }
+
   const contactsCount = await ContactsCollection.find().merge(contactQuery).countDocuments();
 
   const contacts = await contactQuery.skip(skip).limit(limit).sort({[sortBy]: sortOrder}).exec();
@@ -49,6 +53,7 @@ export const patchContacts = async (contactId, payload, options = {}) => {
     isNew: Boolean(result?.lastErrorObject?.upserted)
   };
 };
+
 export const deleteContact = async (contactId) => {
   const contact = await ContactsCollection.findOneAndDelete({ _id: contactId });
   return contact;
