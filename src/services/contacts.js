@@ -1,3 +1,5 @@
+
+
 import { SORT_ORDER } from "../constants/contacts.js";
 import ContactsCollection from "../db/models/Contacts.js";
 
@@ -16,9 +18,10 @@ export const getContacts = async ({page = 1, perPage = 10, sortBy = '_id', sortO
     contactQuery.where("contactType").equals(filter.contactType);
   };
 
-if (filter.userId) {
-    contactQuery.where('userId').eq(filter.userId);
+  if (filter.userId) {
+    contactQuery.where("userId").equals(filter.userId);
   }
+
 
   const contactsCount = await ContactsCollection.find().merge(contactQuery).countDocuments();
 
@@ -33,8 +36,8 @@ if (filter.userId) {
 
 };
 
-export const getContactById = async (contactId) => {
-  const contact = await ContactsCollection.findById(contactId);
+export const getContactById = async (filter) => {
+  const contact = await ContactsCollection.findOne(filter);
 
   return contact;
 };
@@ -55,7 +58,7 @@ export const patchContacts = async (contactId, payload, options = {}) => {
 };
 
 export const deleteContact = async (contactId) => {
-  const contact = await ContactsCollection.findOneAndDelete({ _id: contactId });
+  const contact = await ContactsCollection.findOneAndDelete({ _id: contactId});
   return contact;
  };
 

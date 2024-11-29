@@ -1,9 +1,10 @@
 import createHttpError from "http-errors";
-import { UserCollection } from "../db/models/User.js";
+
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { FIFTEEN_MINUTES, ONE_DAY } from "../constants/contacts.js";
 import { SessionCollection } from "../db/models/session.js";
+import { UserCollection } from "../db/models/User.js";
 
 
 export const registerUser = async (payload) => {
@@ -22,7 +23,7 @@ export const registerUser = async (payload) => {
 export const loginUser = async (payload) => {
 
 const user = await UserCollection.findOne({ email: payload.email });
-  if (!user) throw createHttpError(404, 'Email in use');
+  if (!user) throw createHttpError(404, 'User not found');
 
   const isEqual = await bcrypt.compare(payload.password, user.password);
 
@@ -49,7 +50,7 @@ export const logoutUser = async (sessionId) => {
   await SessionCollection.deleteOne({ _id: sessionId });
 };
 
-const creteSession = () => {
+const createSession = () => {
 const accessToken = randomBytes(30).toString('base64');
   const refreshToken = randomBytes(30).toString('base64');
 
@@ -78,7 +79,7 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
     throw createHttpError(401, 'Session token expired');
   }
 
-  const newSession = creteSession();
+  const newSession = createSession();
 
   await SessionCollection.deleteOne({ _id: sessionId, refreshToken });
 

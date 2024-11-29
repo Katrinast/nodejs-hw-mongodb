@@ -10,4 +10,4 @@ const sessionsSchema = new Schema({
   refreshTokenValidUntil: {type: Date, required: true},
 }, { timestamps: true, versionKey: false });
 
-export const SessionCollection = model('session', sessionsSchema);
+export const SessionCollection = model('sessions', sessionsSchema);

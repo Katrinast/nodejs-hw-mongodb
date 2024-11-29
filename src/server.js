@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import { env } from './utils/env.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
-import contactsRouter from './router/contacts.js';
+
 import router from '../src/router/index.js';
 
 const PORT = Number(env('PORT', 3001));
@@ -16,9 +16,8 @@ const PORT = Number(env('PORT', 3001));
 
 export const setupServer = () => {
   const app = express();
+  app.use(express.json());
 
-  app.use(cors());
-  app.use(cookieParser());
 
   const logger = pino({
     transport: {
@@ -28,9 +27,12 @@ export const setupServer = () => {
 
   // app.use(logger);
 
-  app.use(express.json());
+  app.use(cors());
+  app.use(cookieParser());
 
-  app.use(contactsRouter);
+
+
+
    app.use(router);
 
   app.use("*", notFoundHandler);
