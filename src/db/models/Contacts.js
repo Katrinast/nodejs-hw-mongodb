@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import { contactsList } from "../../constants/contacts.js";
 
 
+
 const contactsSchema = new Schema({
   name: {
     type: String,
@@ -29,7 +30,10 @@ const contactsSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'user',
       required: true,
-    },
+  },
+  photo: {
+type: String,
+   },
 },
 
   {

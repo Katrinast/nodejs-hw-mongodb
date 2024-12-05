@@ -58,7 +58,7 @@ export const patchContacts = async (contactId, userId, payload, options = {}) =>
 };
 
 export const deleteContact = async (contactId, userId) => {
-  console.log(contactId, userId);
+  
   const contact = await ContactsCollection.findOneAndDelete( {_id: contactId, userId});
   return contact;
  };

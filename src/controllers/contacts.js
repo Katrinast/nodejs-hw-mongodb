@@ -5,6 +5,9 @@ import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 import { parseSortParams } from "../utils/parseSortParams.js";
 
 import { parseFilterParams } from "../utils/parseFilterParams.js";
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
+import { env } from "../utils/env.js";
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -42,9 +45,22 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const postContactsController = async (req, res) => {
-   const { _id: userId } = req.user;
+  const { _id: userId } = req.user;
 
-  const contact = await postContacts({...req.body, userId});
+  const photo = req.file;
+
+  let photoUrl;
+
+  if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+ photoUrl = await saveFileToUploadDir(photo);
+    }
+
+  }
+
+  const contact = await postContacts({...req.body, userId, photo: photoUrl,});
 
   res.status(201).json({
     status: 201,
@@ -55,11 +71,28 @@ export const postContactsController = async (req, res) => {
 
 export const patchContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
-  const payload = req.body;
+
   const { _id: userId } = req.user;
+  const photo = req.file;
+
+  let photoUrl;
+
+ if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+ photoUrl = await saveFileToUploadDir(photo);
+    }
+
+  }
+
+
 
   const data = await patchContacts( contactId, userId ,
-    payload,);
+    {
+      ...req.body,
+      photo: photoUrl,
+    },);
 
    if (!data) throw createHttpError(404, 'Contact not found');
 

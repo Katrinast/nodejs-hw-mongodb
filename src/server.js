@@ -10,6 +10,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 import router from '../src/router/index.js';
+import { UPLOAD_DIR } from './constants/contacts.js';
 
 const PORT = Number(env('PORT', 3001));
 
@@ -29,6 +30,7 @@ export const setupServer = () => {
 
   app.use(cors());
   app.use(cookieParser());
+  app.use(express.static("uploads"));
 
 
 
@@ -39,6 +41,7 @@ export const setupServer = () => {
 
 
   app.use(errorHandler);
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
 
 
