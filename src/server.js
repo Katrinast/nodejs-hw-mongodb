@@ -11,6 +11,7 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 import router from '../src/router/index.js';
 import { UPLOAD_DIR } from './constants/contacts.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const PORT = Number(env('PORT', 3001));
 
@@ -26,24 +27,22 @@ export const setupServer = () => {
     }
   });
 
-  // app.use(logger);
+  app.use(logger);
 
   app.use(cors());
   app.use(cookieParser());
-  app.use(express.static("uploads"));
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
 
 
 
-   app.use(router);
+  app.use(router);
+  app.use('/api-docs', swaggerDocs());
 
   app.use("*", notFoundHandler);
 
 
   app.use(errorHandler);
-  app.use('/uploads', express.static(UPLOAD_DIR));
-
-
 
 
   app.listen(PORT, () => {

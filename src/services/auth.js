@@ -8,6 +8,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { randomBytes } from 'crypto';
 
+import { getFullNameFromGoogleTokenPayload, validateCode } from "../utils/googleOAuth2.js";
+
 
 import { FIFTEEN_MINUTES, ONE_DAY, SMTP, TEMPLATES_DIR } from "../constants/contacts.js";
 import SessionCollection  from "../db/models/session.js";
@@ -163,4 +165,33 @@ export const resetPassword = async (payload) => {
   );
 
 
+};
+
+
+export const loginOrSignupWithGoogle = async (code) => {
+
+  const loginTicket = await validateCode(code);
+
+  const payload = loginTicket.getPayload();
+
+  if (!payload) throw createHttpError(401);
+
+  let user = await UserCollection.findOne({
+email: email.payload,
+  });
+
+  if (!user) {
+    const password = await bcrypt.hash(randomBytes(10), 10);
+    user = await UserCollection.create({
+      email: payload.email,
+      name: getFullNameFromGoogleTokenPayload(payload),
+password,
+    });
+  }
+  const newSession = createSession();
+
+  return await SessionCollection.create({
+    userId: user._id,
+    ...newSession,
+  });
 };
